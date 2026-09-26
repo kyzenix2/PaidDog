@@ -1,4 +1,5 @@
 const TICKER = "$PAIDDOG";
+const CA = "G5Gg3ySGiEcPtvr3q74pPb6UzXXCZc6cvnQi1b4Bpump";
 const PACK_KEY = "paiddog-pack";
 
 const form = document.querySelector("#pair-form");
@@ -28,6 +29,10 @@ window.addEventListener("scroll", () => {
 
 document.querySelectorAll("[data-copy-ticker]").forEach((btn) => {
   btn.addEventListener("click", () => copyTicker(btn));
+});
+
+document.querySelectorAll("[data-copy-ca]").forEach((btn) => {
+  btn.addEventListener("click", () => copyValue(btn, btn.getAttribute("data-copy-ca") || CA, "CA copied"));
 });
 
 form.addEventListener("submit", (event) => {
@@ -107,7 +112,7 @@ function address(handle) {
   payeeEl.classList.remove("flash");
   void payeeEl.offsetWidth;
   payeeEl.classList.add("flash");
-  memeLine = at + ", the dog addressed your meme paycheck. $PAIDDOG — sit, stay, get paid. A meme of @UsePaid. https://x.com/UsePaid";
+  memeLine = at + ", the dog addressed your meme paycheck. $PAIDDOG — sit, stay, get paid. CA: " + CA + " https://x.com/UsePaid";
   copyMeme.disabled = false;
   postMeme.disabled = false;
   input.value = handle;
@@ -169,19 +174,24 @@ function renderPack() {
   });
 }
 
-async function copyTicker(btn) {
+function copyTicker(btn) {
+  return copyValue(btn, TICKER, "Ticker copied", TICKER);
+}
+
+async function copyValue(btn, value, toastMessage, restoreLabel) {
+  const label = btn.querySelector(".btn-label");
+  const original = label ? label.textContent : "";
   try {
-    await copyText(TICKER);
-    const label = btn.querySelector(".btn-label");
+    await copyText(value);
     if (label) {
       label.textContent = "Copied";
       btn.classList.add("is-copied");
       window.setTimeout(() => {
-        label.textContent = TICKER;
+        label.textContent = restoreLabel || original;
         btn.classList.remove("is-copied");
       }, 1400);
     }
-    showToast("Ticker copied");
+    showToast(toastMessage);
   } catch {
     showToast("Copy didn’t land");
   }
